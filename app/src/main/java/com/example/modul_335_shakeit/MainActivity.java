@@ -3,6 +3,7 @@ package com.example.modul_335_shakeit;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
@@ -10,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,6 +50,14 @@ public class MainActivity extends AppCompatActivity {
             AudioFileModel songData = new AudioFileModel(cursor.getString(1),cursor.getString(0),cursor.getString(2));
             if(new File(songData.getPath()).exists())
                 songs.add(songData);
+        }
+
+        if(songs.size()==0){
+            noSongsText.setVisibility(View.VISIBLE);
+        }else{
+            //recyclerview
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            recyclerView.setAdapter(new MusicListAdatper(songs,getApplicationContext()));
         }
     }
 
