@@ -13,6 +13,9 @@ import android.provider.MediaStore;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
@@ -25,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.recycler_view);
         noSongsText = findViewById(R.id.no_songs_text);
+        ArrayList<AudioFileModel> songs = new ArrayList<>();
 
         if(checkPermission() == false){
             requestPermission();
@@ -40,16 +44,16 @@ public class MainActivity extends AppCompatActivity {
         String selection = MediaStore.Audio.Media.IS_MUSIC +" != 0";
 
         Cursor cursor = getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,projection,selection,null,null);
-
+        while(cursor.moveToNext()){
+            AudioFileModel songData = new AudioFileModel(cursor.getString(1),cursor.getString(0),cursor.getString(2));
+            if(new File(songData.getPath()).exists())
+                songs.add(songData);
+        }
     }
 
     boolean checkPermission(){
         int result = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE);
-        if(result == PackageManager.PERMISSION_GRANTED){
-            return true;
-        }else{
-            return false;
-        }
+        return result == PackageManager.PERMISSION_GRANTED;
     }
 
     void requestPermission(){
